@@ -20,4 +20,5 @@ ioHook.start();
 
 
 
-robot.keyTap("command");
+robot.keyToggle('right', 'down', ['control', 'command']);
+robot.keyToggle('left', 'down', ['control', 'command']);
