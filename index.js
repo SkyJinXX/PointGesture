@@ -4,10 +4,7 @@ const addEventListener = require('./event');
 
 
 // registe listener
-const desktopRight = ioHook.registerShortcut([29, 3675, 61005], (keys) => {
-    console.log('桌面向右')
-  });
-addEventListener(ioHook, 'mouseButtonRight', (e) => {
+addEventListener(ioHook, 'holdMouseRBtnMove', (e) => {
   switch (e.moveDirection) {
     case 'up':
       doAction('taskView');
