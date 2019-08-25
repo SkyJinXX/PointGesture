@@ -3,6 +3,7 @@ const getMoveDirection = require('./util/getMoveDirection');
 
 const events = new Map([
     ['holdMouseRBtnMove', (ioHook, handler) => {
+        registHoldMouseBtnMove(ioHook);
         let downMode = false;
         let start = { x: -1, y: -1 };
         let current = { x: -1, y: -1 };
@@ -10,7 +11,7 @@ const events = new Map([
 
         // down && up
         ioHook.on('mousedown', event => {
-            // console.log(event); 
+            console.log(event); 
             if (event.button === 2) {
                 if (letItGo) return;
 
@@ -40,7 +41,7 @@ const events = new Map([
         // 鼠标移动判断
         ioHook.on('mousedrag', event => {
 
-            // console.log(event);
+            console.log(event);
             if (downMode) {// 如果是按下的状态
                 if (start.x === -1 && start.y === -1) {// 获取初始值
                     start.x = event.x;
