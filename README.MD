@@ -19,3 +19,6 @@
 -   拖拽时，鼠标指针变为‘抓住的手’的形状，增加拖拽的**真实感**
 -   检测是否有全屏应用，如果有，则自动关闭功能
 -   可配置鼠标按键和具体操作
+
+## Gif演示
+![Gif演示](https://github.com/SkyJinXX/pointGesture/raw/master/assets/images/demo.gif)
