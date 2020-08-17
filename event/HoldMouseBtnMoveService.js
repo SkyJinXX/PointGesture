@@ -19,7 +19,7 @@ class HoldMouseBtnMoveService {
         this.ioHook = ioHook;
         this.buttonHandler = new Map();
         this.listenerMap = new Map();
-        this.downButton = 0;
+        this.downButtonStack = []; // 用栈记录按下button的顺序
         this.startPos = { x: -1, y: -1 }; // 初始化/重置
         this.currentPos = { x: -1, y: -1 }; // 初始化/更新/重置
         this.lastPos = { x: -1, y: -1 }; // 初始化/更新/重置
@@ -38,20 +38,20 @@ class HoldMouseBtnMoveService {
             // console.log(event);
             if (letItGo) return;
 
-            this.downButton = event.button; // 记录按下的button，给mousedrag用
+            this.downButtonStack.push(event.button); // 记录按下的button，给mousedrag用
         });
         listenerMap.set(mouseup, (event) => {
             // console.log(event);
+            let downButton = this.downButtonStack.pop();
             if (letItGo) {
                 letItGo = false;
                 return;
             }
             // 未移动鼠标时，触发真正的单击
-            if (!this.lastMoveDirection && this.downButton !== leftBtn) {
+            if (!this.lastMoveDirection && downButton !== leftBtn) {
                 letItGo = true;
                 this.ioHook.enableClickPropagation();
-                console.log(this.downButton)
-                robot.mouseClick(btn2RobotBtn[this.downButton]);
+                robot.mouseClick(btn2RobotBtn[downButton]);
                 this.ioHook.disableClickPropagation();
             }
 
@@ -59,8 +59,14 @@ class HoldMouseBtnMoveService {
         });
         listenerMap.set(mousedrag, (event) => {
             // console.log(event);
-            // 前置判断： 没注册过这个btn，就什么也不做
-            if (!buttonHandler.has(this.downButton)) {
+            // 前置判断： 没注册过这个btn，就什么也不做(多个button同时按下时，仅判断最后按下的)
+            if (!this.downButtonStack.length) {
+                return;
+            }
+            let downButton = this.downButtonStack[
+                this.downButtonStack.length - 1
+            ];
+            if (!buttonHandler.has(downButton)) {
                 return;
             }
 
@@ -72,7 +78,8 @@ class HoldMouseBtnMoveService {
                 if (!this.lastMoveDirection) {
                     startPos.x = event.x;
                     startPos.y = event.y;
-                } else { // 触发事件后不松手的情况
+                } else {
+                    // 触发事件后不松手的情况
                     // 初始化lastPos
                     if (lastPos.x === -1 && lastPos.y === -1) {
                         lastPos.x = event.x;
@@ -113,12 +120,16 @@ class HoldMouseBtnMoveService {
                 return;
             }
             // 获取并处理方向
-            let moveDirection = getMoveDirection(startPos, currentPos, this.lastMoveDirection);
+            let moveDirection = getMoveDirection(
+                startPos,
+                currentPos,
+                this.lastMoveDirection
+            );
 
             if (moveDirection) {
                 console.log(moveDirection);
                 // 执行事件handler
-                buttonHandler.get(this.downButton)({ moveDirection });
+                buttonHandler.get(downButton)({ moveDirection });
                 // 记录方向
                 this.lastMoveDirection = moveDirection;
                 // 重置位置
@@ -131,7 +142,6 @@ class HoldMouseBtnMoveService {
         let { startPos, currentPos, lastPos } = this;
 
         if (type === "full") {
-            this.downButton = 0; // 清除按下的button
             this.lastMoveDirection = null; // 清除上一个移动方向，因为松开按钮之后就可以继续同一个方向了
         }
         // 重置位置变量
