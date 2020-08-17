@@ -47,12 +47,13 @@ class HoldMouseBtnMoveService {
                 return;
             }
             // 未移动鼠标时，触发真正的单击
-            // if (startPos.x === -1 && startPos.y === -1) {
-            //     letItGo = true;
-            //     ioHook.enableClickPropagation();
-            //     robot.mouseClick(btn2RobotBtn[downButton]);
-            //     ioHook.disableClickPropagation();
-            // }
+            if (!this.lastMoveDirection && this.downButton !== leftBtn) {
+                letItGo = true;
+                this.ioHook.enableClickPropagation();
+                console.log(this.downButton)
+                robot.mouseClick(btn2RobotBtn[this.downButton]);
+                this.ioHook.disableClickPropagation();
+            }
 
             this._reset("full");
         });
@@ -142,7 +143,7 @@ class HoldMouseBtnMoveService {
     add(btnType, handler) {
         this.buttonHandler.set(btnType, handler);
 
-        // this.ioHook.disableClickPropagation();
+        this.ioHook.disableClickPropagation();
     }
 
     remove(btnType, handler) {
