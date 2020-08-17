@@ -152,8 +152,6 @@ class HoldMouseBtnMoveService {
 
     add(btnType, handler) {
         this.buttonHandler.set(btnType, handler);
-
-        this.ioHook.disableClickPropagation();
     }
 
     remove(btnType, handler) {
