@@ -2,7 +2,7 @@
 
 ## 目的
 
-提高（单手操作鼠标或 Thinkpad 小红点时的）任务切换效率。
+提高（单手操作鼠标或 Thinkpad 小红点时的）任务切换效率。 
 
 ## 基础功能
 
@@ -22,3 +22,13 @@
 
 ## Gif演示
 ![Gif演示](https://github.com/SkyJinXX/pointGesture/raw/master/assets/images/demo.gif)
+
+## Install
+
+[Download](https://github.com/SkyJinXX/pointGesture/releases) 
+
+## Build
+
+可能会遇到很多坑：需要手动修改iohook并rebuild、electron abi要和native dependencies的abi版本一致、cmake-js的安装、node-gyp的安装、electron-builder的一些坑
+
+    npm run dist

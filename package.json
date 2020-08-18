@@ -1,12 +1,11 @@
 {
   "name": "point-gesture",
   "version": "0.1.0",
-  "description": "",
+  "description": "a gesture tool",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
     "dist": "electron-builder --win --x64",
-    "package": "electron-packager ./ PointGesture --overwrite --icon=./assets/images/P.ico",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "sky-jin",
@@ -21,13 +20,20 @@
     "electron-packager": "^15.0.0"
   },
   "build": {
-    "appId": "com.skyjin.app",
+    "appId": "PointGesture",
+    "productName": "PointGesture",
     "win": {
       "target": [
-        "nsis",
-        "zip"
-      ]
-    }
+        "portable",
+        "nsis"
+      ],
+      "icon": "assets/images/app.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    },
+    "npmRebuild": false
   },
   "iohook": {
     "targets": [
