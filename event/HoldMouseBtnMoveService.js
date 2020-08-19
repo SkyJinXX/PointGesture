@@ -13,13 +13,20 @@ const btn2RobotBtn = {
     [middleBtn]: "middle",
     [leftBtn]: "left",
 };
+Set.prototype.getLastItem = function () {
+    let lastItem
+    for (let item of this) {
+        lastItem = item
+    }
+    return lastItem
+}
 
 class HoldMouseBtnMoveService {
     constructor(ioHook) {
         this.ioHook = ioHook;
         this.buttonHandler = new Map();
         this.listenerMap = new Map();
-        this.downButtonStack = []; // 用栈记录按下button的顺序
+        this.downButtonSet = new Set(); // 用Set记录按下button的顺序
         this.startPos = { x: -1, y: -1 }; // 初始化/重置
         this.currentPos = { x: -1, y: -1 }; // 初始化/更新/重置
         this.lastPos = { x: -1, y: -1 }; // 初始化/更新/重置
@@ -38,11 +45,12 @@ class HoldMouseBtnMoveService {
             // console.log(event);
             if (letItGo) return;
 
-            this.downButtonStack.push(event.button); // 记录按下的button，给mousedrag用
+            this.downButtonSet.add(event.button); // 记录按下的button，给mousedrag用
         });
         listenerMap.set(mouseup, (event) => {
             // console.log(event);
-            let downButton = this.downButtonStack.pop();
+            this.downButtonSet.delete(event.button)
+            let downButton = event.button;
             if (letItGo) {
                 letItGo = false;
                 return;
@@ -51,6 +59,7 @@ class HoldMouseBtnMoveService {
             if (!this.lastMoveDirection && downButton !== leftBtn) {
                 letItGo = true;
                 this.ioHook.enableClickPropagation();
+                console.log(downButton+'!!!!')
                 robot.mouseClick(btn2RobotBtn[downButton]);
                 this.ioHook.disableClickPropagation();
             }
@@ -60,12 +69,10 @@ class HoldMouseBtnMoveService {
         listenerMap.set(mousedrag, (event) => {
             // console.log(event);
             // 前置判断： 没注册过这个btn，就什么也不做(多个button同时按下时，仅判断最后按下的)
-            if (!this.downButtonStack.length) {
+            if (!this.downButtonSet.size) {
                 return;
             }
-            let downButton = this.downButtonStack[
-                this.downButtonStack.length - 1
-            ];
+            let downButton = this.downButtonSet.getLastItem();
             if (!buttonHandler.has(downButton)) {
                 return;
             }

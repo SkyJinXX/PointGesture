@@ -8,7 +8,7 @@
     "dist": "electron-builder --win --x64",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "sky-jin",
+  "author": "SkyJin",
   "license": "ISC",
   "dependencies": {
     "iohook": "^0.6.6",
