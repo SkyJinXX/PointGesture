@@ -1,31 +1,50 @@
-const {app, Menu, Tray} = require('electron');
-const path = require('path')
-const PointGesture = require('./PointGesture')
+const { app, Menu, Tray, dialog, globalShortcut } = require("electron");
+const path = require("path");
+const GestureService = require("./GestureService");
+let service, tray;
+const menuTemplate = [
+    {
+        id: "toggle",
+        label: "暂停",
+        click: () => app.toggle()
+    },
+    {
+        label: "退出",
+        click: () => app.quit()
+    },
+];
+app.toggle = () => {
+    if (!service || !tray) {
+        return console.error('服务未启动');
+    }
 
-app.on('ready', () => {
-    const pointGesture = new PointGesture()
-    // const iconUrl = process.env.NODE_ENV === 'development' ? path.join(__dirname, './assets/images/P.ico') : path.join(__dirname, 'static/favicon.ico')
-    const tray = new Tray(path.join(__dirname,'./assets/images/app.ico'));
-    const menuTemplate = [
-        {
-            id: 'toggle',
-            label: '暂停',
-            click: function () {
-                pointGesture.isActive ? pointGesture.pause() : pointGesture.active();
-                menuTemplate[0].label = pointGesture.isActive ? '暂停' : '激活';
-                tray.setContextMenu(Menu.buildFromTemplate(menuTemplate))
-            }
-        },
-        {
-            label: '退出',
-            click: function(){
-                pointGesture.stop();
-                app.quit();
-            }
-        }
-    ]
-    
-    tray.setToolTip('PointGesture');
+    if(app.isActive) {
+        service.pause();
+        menuTemplate[0].label = "激活";
+        app.isActive = false;
+    } else {
+        service.active();
+        menuTemplate[0].label = "暂停";
+        app.isActive = true;
+    }
     tray.setContextMenu(Menu.buildFromTemplate(menuTemplate));
-    pointGesture.start();
-})
+}
+
+app.on("ready", () => {
+    service = new GestureService();
+    tray = new Tray(path.join(__dirname, "./assets/images/app.ico"));
+
+    tray.setToolTip("PointGesture");
+    tray.setContextMenu(Menu.buildFromTemplate(menuTemplate));
+    service.start();
+    globalShortcut.register("Shift+Alt+P", function () {
+        app.toggle();
+    });
+
+    app.isActive = true;
+});
+
+app.on("will-quit", () => {
+    service.stop();
+    globalShortcut.unregisterAll();
+});

@@ -2,7 +2,7 @@ const ioHook = require("iohook");
 const doAction = require("./action");
 const EventRegister = require("./event/EventRegister");
 
-class PointGesture {
+class GestureService {
     constructor() {
         this.ioHook = ioHook;
         this.register = new EventRegister(this.ioHook);
@@ -49,4 +49,4 @@ class PointGesture {
     }
 }
 
-module.exports = PointGesture;
+module.exports = GestureService;

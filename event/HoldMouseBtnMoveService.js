@@ -13,7 +13,7 @@ const btn2RobotBtn = {
     [middleBtn]: "middle",
     [leftBtn]: "left",
 };
-Set.prototype.getLastItem = function () {
+Set.prototype.getLastItem = function () { // 不用Array是因为需要删除指定元素
     let lastItem
     for (let item of this) {
         lastItem = item
@@ -42,24 +42,23 @@ class HoldMouseBtnMoveService {
         let { startPos, currentPos, lastPos, letItGo, buttonHandler } = this;
 
         listenerMap.set(mousedown, (event) => {
-            // console.log(event);
             if (letItGo) return;
+            // console.log(event);
 
             this.downButtonSet.add(event.button); // 记录按下的button，给mousedrag用
         });
         listenerMap.set(mouseup, (event) => {
-            // console.log(event);
-            this.downButtonSet.delete(event.button)
-            let downButton = event.button;
             if (letItGo) {
                 letItGo = false;
                 return;
             }
+            // console.log(event);
+            this.downButtonSet.delete(event.button)
+            let downButton = event.button;
             // 未移动鼠标时，触发真正的单击
             if (!this.lastMoveDirection && downButton !== leftBtn) {
                 letItGo = true;
                 this.ioHook.enableClickPropagation();
-                console.log(downButton+'!!!!')
                 robot.mouseClick(btn2RobotBtn[downButton]);
                 this.ioHook.disableClickPropagation();
             }
