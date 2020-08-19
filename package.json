@@ -1,11 +1,11 @@
 {
   "name": "point-gesture",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "a gesture tool",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "dist": "electron-builder --win --x64",
+    "dist": "rm -rf dist/* && electron-builder --win --x64",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "SkyJin",
@@ -31,7 +31,11 @@
     },
     "nsis": {
       "oneClick": false,
-      "allowToChangeInstallationDirectory": true
+      "allowToChangeInstallationDirectory": true,
+      "artifactName": "${productName}_windows_installer_${version}.${ext}"
+    },
+    "portable": {
+      "artifactName": "${productName}_windows_portable_${version}.${ext}"
     },
     "npmRebuild": false
   },
